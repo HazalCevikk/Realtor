@@ -3,9 +3,55 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import React, { useState } from "react";
 import Image from "next/image";
+import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function page() {
   const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = formData;
+
+  function onChange(e) {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  }
+  const router = useRouter();
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential.user) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.log("err", error);
+      toast.error("Please register firstly!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
   return (
     <Layout>
       <div className="bg-gray-100 w-full h-[93.2vh] flex justify-center items-center">
@@ -17,66 +63,80 @@ export default function page() {
               alt="signin"
             ></Image>
           </div>
+
           <div className="w-1/2 p-16">
             <p className="font-bold text-5xl mb-16 text-[#FF725E]">Log In</p>
-            <div>
-              <Image
-                src={"/assets/profile-user.svg"}
-                width={16}
-                height={16}
-                alt="profile-user"
-                className="relative top-[1.7rem] left-2"
-              ></Image>
-              <input
-                type="text"
-                className="border-b-[1px] border-gray-500 py-4 px-8 h-[40px] w-full outline-none bg-white"
-                placeholder="Your Name"
-              ></input>
-            </div>
-            <div className="relative w-auto h-auto mt-4">
-              <Image
-                src={"/assets/safe-lock.svg"}
-                width={18}
-                height={18}
-                alt="safe-lock"
-                className="absolute top-[0.70rem] left-2"
-              ></Image>
-              <Image
-                src={visible ? "/assets/eye.svg" : "/assets/eye-closed.svg"}
-                width={18}
-                height={18}
-                alt="safe-lock"
-                className="absolute top-[0.75rem] right-4"
-                onClick={() => setVisible(!visible)}
-              ></Image>
-              <input
-                type={visible ? "text" : "password"}
-                className="border-b-[1px] border-gray-500 py-4 px-8 h-[40px] w-full outline-none bg-white"
-                placeholder="Password"
-              ></input>
-            </div>
-            <div className="flex justify-between my-8">
-              <p>
-                Don't Have an account?{" "}
+            <form onSubmit={onSubmit}>
+              <div>
+                <Image
+                  src={"/assets/profile-user.svg"}
+                  width={16}
+                  height={16}
+                  alt="profile-user"
+                  className="relative top-[1.7rem] left-2"
+                ></Image>
+                <input
+                  type="text"
+                  className="border-b-[1px] border-gray-500 py-4 px-8 h-[40px] w-full outline-none bg-white"
+                  placeholder="Your e-mail"
+                  id="email"
+                  value={email}
+                  onChange={onChange}
+                  autoComplete="on"
+                ></input>
+              </div>
+              <div className="relative w-auto h-auto mt-4">
+                <Image
+                  src={"/assets/safe-lock.svg"}
+                  width={18}
+                  height={18}
+                  alt="safe-lock"
+                  className="absolute top-[0.70rem] left-2"
+                ></Image>
+                <Image
+                  src={visible ? "/assets/eye.svg" : "/assets/eye-closed.svg"}
+                  width={18}
+                  height={18}
+                  alt="eye-closed"
+                  className="absolute top-[0.75rem] right-4"
+                  onClick={() => setVisible(!visible)}
+                ></Image>
+                <input
+                  type={visible ? "text" : "password"}
+                  className="border-b-[1px] border-gray-500 py-4 px-8 h-[40px] w-full outline-none bg-white"
+                  placeholder="Password"
+                  id="password"
+                  value={password}
+                  onChange={onChange}
+                  autoComplete="on"
+                ></input>
+              </div>
+
+              <div className="flex justify-between my-8">
+                <p>
+                  Don't Have an account?{" "}
+                  <Link
+                    className="text-[#FF725E] cursor-pointer"
+                    href={"/sign-up"}
+                  >
+                    Register
+                  </Link>
+                </p>
                 <Link
                   className="text-[#FF725E] cursor-pointer"
-                  href={"/sign-up"}
+                  href={"/forgot-password"}
                 >
-                  Register
+                  Forgot password
                 </Link>
-              </p>
-              <Link
-                className="text-[#FF725E] cursor-pointer"
-                href={"/forgot-password"}
+              </div>
+
+              <button
+                type="submit"
+                className="font-semibold rounded-sm text-white bg-[#FF725E] px-6 py-2 hover:text-white-400 hover:bg-[#B35042] focus:bg-[#B35042]"
               >
-                Forgot password
-              </Link>
-            </div>
-
-            <button className="font-semibold rounded-sm text-white bg-[#FF725E] px-6 py-2 hover:text-white-400 hover:bg-[#B35042] focus:bg-[#B35042]">
-              Log in
-            </button>
-
+                Log in
+              </button>
+            </form>
             <div className="w-full flex items-center my-8">
               <p className="w-full border-b-[1px] border-gray-300"></p>
               <p className="text-[#FF725E] mx-4">OR</p>
@@ -94,6 +154,18 @@ export default function page() {
             </div>
           </div>
         </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </div>
     </Layout>
   );
