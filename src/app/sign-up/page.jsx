@@ -80,14 +80,10 @@ export default function page() {
       <div className="bg-gray-100 w-full h-[93.2vh] flex justify-center items-center">
         <div className="bg-white p-8 rounded-lg flex justify-between w-[70%] h-[80%] relative shadow-md ">
           <div className="w-1/2 relative">
-            <Image
-              src={"/assets/sign-in.svg"}
-              layout="fill"
-              alt="signin"
-            ></Image>
+            <Image src={"/assets/city.svg"} layout="fill" alt="signin"></Image>
           </div>
           <div className="w-1/2 p-16">
-            <p className="font-bold text-5xl mb-16 text-[#FF725E]">Sign Up</p>
+            <p className="font-bold text-5xl mb-16 text-[#2E56B2]">Sign Up</p>
             <form onSubmit={onSubmit}>
               <div>
                 <Image
@@ -153,7 +149,7 @@ export default function page() {
                 <p>
                   Have an account?{" "}
                   <Link
-                    className="text-[#FF725E] cursor-pointer"
+                    className="text-[#2E56B2] cursor-pointer"
                     href={"/signin"}
                     type="submit"
                   >
@@ -161,23 +157,23 @@ export default function page() {
                   </Link>
                 </p>
                 <Link
-                  className="text-[#FF725E] cursor-pointer"
+                  className="text-[#2E56B2] cursor-pointer"
                   href={"/forgot-password"}
                 >
                   Forgot password
                 </Link>
               </div>
-              <button className="font-semibold rounded-sm text-white bg-[#FF725E] px-6 py-2 hover:text-white-400 hover:bg-[#B35042] focus:bg-[#B35042]">
+              <button className="font-semibold rounded-sm text-white bg-[#2E56B2] px-6 py-2 hover:text-white-400 hover:bg-[#A4BCFF] focus:bg-[#A4BCFF]">
                 Sign up
               </button>
             </form>
             <div className="w-full flex items-center my-8">
               <p className="w-full border-b-[1px] border-gray-300"></p>
-              <p className="text-[#FF725E] mx-4">OR</p>
+              <p className="text-[#2E56B2] mx-4">OR</p>
               <p className="w-full border-b-[1px] border-gray-300"></p>
             </div>
             <div>
-              <button className="bg-[#FF725E] hover:bg-[#B35042] rounded-sm font-semibold text-white w-full px-6 py-2 flex items-center justify-center space-x-4">
+              <button className="bg-[#2E56B2] hover:bg-[#A4BCFF] rounded-sm font-semibold text-white w-full px-6 py-2 flex items-center justify-center space-x-4">
                 <Image
                   src={"/assets/google-logo.svg"}
                   width={32}
