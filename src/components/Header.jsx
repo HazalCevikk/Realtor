@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 
 export default function Header() {
   return (
@@ -24,12 +24,6 @@ export default function Header() {
             className="font-semibold px-6 pt-2 hover:text-[#A4BCFF] text-[#2E56B2]"
           >
             Profile
-          </Link>
-          <Link
-            className="font-semibold px-6 pt-2 hover:text-[#A4BCFF] text-[#2E56B2]"
-            href={"/signin"}
-          >
-            Signin
           </Link>
         </>
       </div>
