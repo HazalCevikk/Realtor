@@ -9,19 +9,6 @@ export const api = Axios.create({
   },
 });
 
-// api.interceptors.request.use(
-//   function (config) {
-//     const token = Cookies.get('token')
-//     if (token) {
-//       config.headers['Authorization'] = `Bearer ${token}`
-//     }
-//     return config
-//   },
-//   function (error) {
-//     return Promise.reject(error)
-//   },
-// )
-
 export const realtor_api = {
   properties: async () =>
     api
