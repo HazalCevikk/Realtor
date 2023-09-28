@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "ap.rdcpix.com",
         port: "",
       },
+      {
+        protocol: "http",
+        hostname: "ap.rdcpix.com",
+        port: "",
+      },
     ],
   },
 };
