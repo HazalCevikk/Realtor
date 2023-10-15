@@ -34,6 +34,7 @@ export default function page() {
         password
       );
       if (userCredential.user) {
+        console.log("yonlendirmesi gerekmekte")
         router.push("/");
       }
     } catch (error) {

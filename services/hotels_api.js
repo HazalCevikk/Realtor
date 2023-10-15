@@ -3,17 +3,6 @@ import Axios from "axios";
 export const api = Axios.create({
   baseURL: "https://us-real-estate.p.rapidapi.com",
   headers: {
-    "access-control-allow-credentials": "true",
-    "access-control-allow-origin": "*",
-    "alt-svc": "h3=\":443\"; ma=86400",
-    "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 10 Jun 2023 15:23:14 GMT",
-    "server": "RapidAPI-1.2.8",
-    "vary": "Accept-Encoding",
-    "x-rapidapi-region": "AWS - ap-southeast-1",
-    "x-rapidapi-version": "1.2.8",
-    "x-trace": "Add-Header",
-    "x-trial-number": "None",
     "X-RapidAPI-Key": "9e5e0256d7mshde6c2ce9477b80ap10b230jsn84dd74ae2df5",
     "X-RapidAPI-Host": "us-real-estate.p.rapidapi.com"
   },
@@ -41,7 +30,7 @@ export const realtor_api = {
     api
       .get("/v3/for-sale", {
         params: {
-          state_code: 'MI',
+          state_code: 'LA',
           city: 'Detroit',
           sort: 'newest',
           offset: '0',
@@ -51,5 +40,15 @@ export const realtor_api = {
   propertyDetails: async (propertyID) =>
     api
       .get('/v3/property-detail', { params: { property_id: propertyID } })
+      .then((res) => res.data),
+
+  otherHomes: async (propertyID) =>
+    api
+      .get('/for-sale/other-homes-in-building', { params: { property_id: propertyID } })
+      .then((res) => res.data),
+
+  similarHomes: async (propertyID) =>
+    api
+      .get('/for-sale/similiar-homes', { params: { property_id: propertyID } })
       .then((res) => res.data)
 };

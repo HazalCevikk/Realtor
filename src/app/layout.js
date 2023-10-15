@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Header from "@/components/Header";
+import SavedContextProvider from "../../context/forSavedContenxt";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,7 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <SavedContextProvider>
       <body className={inter.className}>{children}</body>
+      </SavedContextProvider>     
     </html>
   );
 }
