@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Image from "next/image";
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { signInWithEmailAndPassword} from "firebase/auth";
+import { auth } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,34 +23,33 @@ export default function page() {
       [e.target.id]: e.target.value,
     }));
   }
+
+  
   const router = useRouter();
 
-  async function onSubmit(e) {
-    e.preventDefault();
-    try {
-      const auth = getAuth();
-      const userCredential = await signInWithEmailAndPassword(
+  const handleSubmit = useCallback((e) => onSubmit(e), [email, password])
+
+ function onSubmit(e) {
+      e.preventDefault();
+      signInWithEmailAndPassword(
         auth,
         email,
         password
-      );
-      if (userCredential.user) {
+      ).then(() => { 
         console.log("yonlendirmesi gerekmekte")
-        router.push("/");
-      }
-    } catch (error) {
-      console.log("err", error);
-      toast.error("Please register firstly!", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
+        router.push("/"); }).catch((error) => {
+       console.log("err", error);
+       toast.error("Please register firstly!", {
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: true,
+         draggable: true,
+         progress: undefined,
+         theme: "light",
+       });
+     })
   }
 
   return (
@@ -61,7 +61,7 @@ export default function page() {
 
         <div className="w-1/2 p-16">
           <p className="font-bold text-5xl mb-16 text-[#2E56B2]">Log In</p>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit}>
             <div>
               <Image
                 src={"/assets/profile-user.svg"}

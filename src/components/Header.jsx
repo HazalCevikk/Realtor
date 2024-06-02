@@ -1,13 +1,18 @@
-import Link from "next/link";
-import React from "react";
+"use client"
+import Image from "next/image";
+import React, { useContext } from "react";
+import { SavedContext } from "../../context/forSavedContenxt";
 
 export default function Header() {
+    const { setIsOpen } = useContext(SavedContext)
+
+
   return (
-    <div className="shadow-md py-4 px-8 flex justify-between space-x-4 ">
+    <div className="shadow-md py-4 px-8 flex justify-between items-center space-x-4 ">
       <p className="text-[#2E56B2] font-bold text-3xl"> Realtor</p>
       <div className="flex space-x-4 ">
         <>
-          <Link
+          {/* <Link
             href={"/"}
             className="px-6 pt-2 hover:text-blue-500"
           >
@@ -18,13 +23,12 @@ export default function Header() {
             className="px-6 pt-2 hover:text-blue-500"
           >
             Save
-          </Link>
-          <Link
-            href={"/profile"}
-            className="px-6 pt-2 hover:text-blue-500"
+          </Link> */}
+          <div
+             onClick={() => setIsOpen(true)}
           >
-            Profile
-          </Link>
+            <Image src={"/assets/user.png"} alt="user" width={50} height={50}/>
+          </div>
         </>
       </div>
     </div>
