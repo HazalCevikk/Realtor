@@ -5,11 +5,14 @@ export const SavedContext = createContext()
 
 const SavedContextProvider = ({children}) => {
     const [savedCards , setSavedCards] = useState([])
+    const [isOpen, setIsOpen] = useState(false)
 
 
     const values = {
         savedCards,
-        setSavedCards
+        setSavedCards,
+        isOpen,
+        setIsOpen,
     }
 
     return (

@@ -1,16 +1,14 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
+  createUserWithEmailAndPassword, updateProfile
 } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "@/firebase";
+import { auth } from "@/firebase"; 
+
 
 export default function page() {
   const [visible, setVisible] = useState(false);
@@ -33,22 +31,14 @@ export default function page() {
     e.preventDefault();
 
     try {
-      const auth = getAuth();
-      const userCredential = await createUserWithEmailAndPassword(
+      
+   createUserWithEmailAndPassword(
         auth,
         email,
         password
-      );
-
-      updateProfile(auth.currentUser, {
-        displayName: name,
+      ).then((auth)=> {
+        updateProfile(auth.user, {displayName: name})
       });
-      const user = userCredential.user;
-      const formDataCopy = { ...formData };
-      delete formDataCopy.password;
-      formDataCopy.timestamp = serverTimestamp();
-
-      await setDoc(doc(db, "users", user.uid), formDataCopy);
       toast.success("Sign up was successful", {
         position: "top-center",
         autoClose: 5000,
@@ -73,6 +63,8 @@ export default function page() {
       });
     }
   }
+
+
 
   return (
     <div className="bg-gray-100 w-full h-[93.2vh] flex justify-center items-center">

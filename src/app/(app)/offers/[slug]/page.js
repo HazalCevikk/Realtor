@@ -10,6 +10,7 @@ import MyDisclosure from '@/components/Disclosure'
 import HomeCardComponent from '@/components/HomeCardComponent'
 
 export default function Page({ params }) {
+  console.log("what is the parmas?", params)
   const { data, isLoading } = useSWR(['dataFetching', params.slug], () => realtor_api.propertyDetails(params.slug))
 
 

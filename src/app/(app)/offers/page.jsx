@@ -4,10 +4,11 @@ import { SavedContext } from "../../../../context/forSavedContenxt";
 import useSWR from "swr";
 import { realtor_api } from "../../../../services/hotels_api";
 import Image from "next/image";
+import NoLikeStatus from "@/components/NoLikeStatus";
 
 
 export default function page() {
-  const {savedCards} = useContext(SavedContext)
+  const {savedCards, setSavedCards} = useContext(SavedContext)
   const [newSavedData, setNewSavedData] = useState()
 
   const { data: apiData, error } = useSWR(
@@ -22,7 +23,22 @@ export default function page() {
         }
   },[savedCards, apiData])
 
-  console.log(savedCards)
+  const handleCardClick = (propertyId) => {
+    // Kartın herhangi bir yerine tıklanıldığında "offers" sayfasına yönlendirme işlemi
+    window.location.href = `/offers/${propertyId}`;
+  };
+
+
+  const toggleSavedCard = (propertyId) => {
+    // Kartın içindeki kalp simgesine tıklanıldığında
+    // seçilen kartlar listesine eklenir veya çıkarılır
+    if (savedCards.includes(propertyId)) {
+      setSavedCards(savedCards.filter((id) => id !== propertyId));
+    } else {
+      setSavedCards([...savedCards, propertyId]);
+    }
+  };
+
   return <div className="p-8 gap-4 w-full h-auto flex flex-rows flex-wrap">
   {!error &&
     newSavedData &&
@@ -109,5 +125,6 @@ export default function page() {
         </div>
       </div>
     ))}
+    {!newSavedData && <NoLikeStatus></NoLikeStatus>}
 </div>
 }
