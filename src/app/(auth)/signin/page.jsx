@@ -1,21 +1,31 @@
 "use client";
 import Link from "next/link";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { signInWithEmailAndPassword} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function page() {
+export default function SignInPage() {
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [user, isLoading] = useAuthState(auth);
 
   const { email, password } = formData;
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.push("/");
+    }
+  }, [user, isLoading, router]);
 
   function onChange(e) {
     setFormData((prevState) => ({
@@ -24,39 +34,34 @@ export default function page() {
     }));
   }
 
-  
-  const router = useRouter();
+  const handleSubmit = useCallback((e) => onSubmit(e), [email, password]);
 
-  const handleSubmit = useCallback((e) => onSubmit(e), [email, password])
-
- function onSubmit(e) {
-      e.preventDefault();
-      signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      ).then(() => { 
-        console.log("yonlendirmesi gerekmekte")
-        router.push("/"); }).catch((error) => {
-       console.log("err", error);
-       toast.error("Please register firstly!", {
-         position: "top-center",
-         autoClose: 5000,
-         hideProgressBar: false,
-         closeOnClick: true,
-         pauseOnHover: true,
-         draggable: true,
-         progress: undefined,
-         theme: "light",
-       });
-     })
+  function onSubmit(e) {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        router.push("/");
+      })
+      .catch((error) => {
+        console.log("err", error);
+        toast.error("Please register firstly!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      });
   }
 
   return (
     <div className="bg-gray-100 w-full h-[93.2vh] flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg flex justify-between w-[70%] h-[80%] relative shadow-md ">
         <div className="w-1/2 relative">
-          <Image src={"/assets/city.svg"} layout="fill" alt="signin"></Image>
+          <Image src={"/assets/city.svg"} layout="fill" alt="signin" />
         </div>
 
         <div className="w-1/2 p-16">
@@ -69,7 +74,7 @@ export default function page() {
                 height={16}
                 alt="profile-user"
                 className="relative top-[1.7rem] left-2"
-              ></Image>
+              />
               <input
                 type="text"
                 className="border-b-[1px] border-gray-500 py-4 px-8 h-[40px] w-full outline-none bg-white"
@@ -78,7 +83,7 @@ export default function page() {
                 value={email}
                 onChange={onChange}
                 autoComplete="on"
-              ></input>
+              />
             </div>
             <div className="relative w-auto h-auto mt-4">
               <Image
@@ -87,7 +92,7 @@ export default function page() {
                 height={18}
                 alt="safe-lock"
                 className="absolute top-[0.70rem] left-2"
-              ></Image>
+              />
               <Image
                 src={visible ? "/assets/eye.svg" : "/assets/eye-closed.svg"}
                 width={18}
@@ -95,7 +100,7 @@ export default function page() {
                 alt="eye-closed"
                 className="absolute top-[0.75rem] right-4"
                 onClick={() => setVisible(!visible)}
-              ></Image>
+              />
               <input
                 type={visible ? "text" : "password"}
                 className="border-b-[1px] border-gray-500 py-4 px-8 h-[40px] w-full outline-none bg-white"
@@ -104,22 +109,19 @@ export default function page() {
                 value={password}
                 onChange={onChange}
                 autoComplete="on"
-              ></input>
+              />
             </div>
 
             <div className="flex justify-between my-8">
               <p>
                 Don't have an account?{" "}
-                <Link
-                  className="text-[#2E56B2] cursor-pointer"
-                  href={"/sign-up"}
-                >
+                <Link className="text-[#2E56B2] cursor-pointer" href="/sign-up">
                   Register
                 </Link>
               </p>
               <Link
                 className="text-[#2E56B2] cursor-pointer"
-                href={"/forgot-password"}
+                href="/forgot-password"
               >
                 Forgot password
               </Link>
@@ -139,11 +141,7 @@ export default function page() {
           </div>
           <div>
             <button className="bg-[#2E56B2] hover:bg-[#A4BCFF] rounded-sm font-semibold text-white w-full px-6 py-2 flex items-center justify-center space-x-4">
-              <Image
-                src={"/assets/google-logo.svg"}
-                width={32}
-                height={32}
-              ></Image>
+              <Image src={"/assets/google-logo.svg"} width={32} height={32} />
               <p>CONTINUE WİTH GOOGLE</p>
             </button>
           </div>
