@@ -5,43 +5,66 @@ import useSWR from "swr";
 import { realtor_api } from "../../../../services/hotels_api";
 import Image from "next/image";
 import NoLikeStatus from "@/components/NoLikeStatus";
+import { ToastContainer, toast } from "react-toastify";
+import { useCollection } from "react-firebase-hooks/firestore"
+import { collection } from "firebase/firestore"
+import { db } from "@/firebase";
+import UndoToastComponent from "@/components/UndoToastComponent";
 
 
 export default function page() {
   const {savedCards, setSavedCards} = useContext(SavedContext)
   const [newSavedData, setNewSavedData] = useState()
 
-  const { data: apiData, error } = useSWR(
-    "dataFetching",
-    () => realtor_api.forSale().then((res) => res?.data?.home_search?.results)
+  const [value, loading, error] = useCollection(
+    collection(db, 'Liked'),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
   );
 
-  useEffect(()=> {
-    if(savedCards.length > 0 && apiData){     
-      const data = apiData.filter((item) => savedCards.includes(item.property_id))
-      setNewSavedData(data)
-        }
-  },[savedCards, apiData])
 
-  const handleCardClick = (propertyId) => {
-    // Kartın herhangi bir yerine tıklanıldığında "offers" sayfasına yönlendirme işlemi
-    window.location.href = `/offers/${propertyId}`;
-  };
+ const { data: apiData, error: dataError } = useSWR(
+     "dataFetching",
+     () => realtor_api.forSale().then((res) => res?.data?.home_search?.results)
+   );
 
+   useEffect(() => {
+    console.log("deneme", loading, error, value, apiData);
+  
+    if (!loading && apiData && value?.docs) {
+      const favoritePropertyIDs = new Set(
+        value.docs.flatMap((doc) => doc.data().PropertyIDofFavorites)
+      );
 
-  const toggleSavedCard = (propertyId) => {
-    // Kartın içindeki kalp simgesine tıklanıldığında
-    // seçilen kartlar listesine eklenir veya çıkarılır
-    if (savedCards.includes(propertyId)) {
-      setSavedCards(savedCards.filter((id) => id !== propertyId));
-    } else {
-      setSavedCards([...savedCards, propertyId]);
+      const data = apiData.filter((item) => favoritePropertyIDs.has(item.property_id));
+  
+      console.log("buraya geldi mi ", data);
+      setNewSavedData(data);
     }
-  };
+  }, [apiData, value]);
+  
+
+   const handleCardClick = (propertyId) => {
+     // Kartın herhangi bir yerine tıklanıldığında "offers" sayfasına yönlendirme işlemi
+     window.location.href = `/offers/${propertyId}`;
+   };
+
+
+   const toggleSavedCard = (propertyId) => {
+     // Kartın içindeki kalp simgesine tıklanıldığında once silmek istediginizden emin misiniz toastifyi açilir tostify kapandiktan sonra
+     // seçilen kartlar listesinden çıkarılır
+       () => toast(<UndoToastComponent />).then(()=> 
+       savedCards.includes(propertyId) &&
+       setSavedCards(savedCards.filter((id) => id !== propertyId))
+      )
+    
+   };
 
   return <div className="p-8 gap-4 w-full h-auto flex flex-rows flex-wrap">
-  {!error &&
-    newSavedData &&
+  {!dataError &&
+   value &&
+   newSavedData ?
     newSavedData?.map((item) => (
       <div
       key={item.property_id}
@@ -124,7 +147,10 @@ export default function page() {
           </div>
         </div>
       </div>
-    ))}
-    {!newSavedData && <NoLikeStatus></NoLikeStatus>}
+    )) :
+    <NoLikeStatus></NoLikeStatus> 
+    }
+ 
+    <ToastContainer />
 </div>
 }
